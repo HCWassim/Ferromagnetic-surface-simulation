@@ -1,5 +1,6 @@
 # Ferromagnetic-surface-simulation
 The goal of this topic is to model ferromagnetic materials features using ```PyGame``` engine and ```Matplotlib```.
+This work was done in collaboration with [Ezzakri Anas](https://github.com/ezzakri-anas).
 ## The studied phenomenon
 Indeed, a ferromagnetic surface has for main characteristic a spontaneous magnetization presence which appears after a magnetic field is applied on it. However this magnet effect may vanish if the temperature where this material is increase. This is what we call Curie's temperature.
 
@@ -29,4 +30,54 @@ Here is a preview of what we want to model:
 </p>
 
 ## Solving of the problem
+To solve this problem, we divided it in 2 parts:
+* The first one was an Algorithm answer to the problem
+* The second one was about graphic interface
 
+# The Algorithm
+In this part of the project we used ```Numpy``` to represent the grid in 2D, ```math``` for the exponential calculus, ```random``` to choose a random value for **dS** between 1 and -1 and ```matplotlib``` to plot the global magnetization value:
+
+```python
+import math
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+## Grid algorithm
+Firstly we need to initialize the value corresponding to each **dS** element, we can either to it randomly to modelize a spontanous magnetization:
+
+```python
+N = 100 # size of the grid
+lst = [[random.choice([-1, 1]) for _ in range(N)] for _ in range(N)]
+GRILLE = np.array(lst, dtype=int)
+```
+or with the same value of **dS** for a global magnetization:
+
+```python
+N = 100
+lst = [[1 for _ in range(N)] for _ in range(N)]
+GRILLE = np.array(lst, dtype=int)
+```
+## Neighboor of a cell
+Our choice to represent the grid is a toroid this means that the left border is connected to the right one and the top one to the bottom one. After this choice we created the function ```voisinsde``` returning the list of 8 neighboor for a given cell:
+
+```python
+def voisinsde(coord): # coord = (colonne, ligne) = (y,x)
+    voisins = [] # liste qui va contenir tous les coordonnées des 8 voisins
+    y = coord[0]
+    x = coord[1]
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if (j, i) == (0, 0):# on saute la cellule centrale
+                continue
+            # calcule permettant davoir les coordonnées de voisin 
+            #comme si le réseau était une tore
+            y_voisin = (y + j + N) % N 
+            x_voisin = (x + i + N) % N
+            voisins.append((y_voisin, x_voisin))
+    return voisins
+```
+
+## Energy fluctuation
+To represent the energy fluctuation
