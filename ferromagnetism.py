@@ -9,8 +9,6 @@ from scipy.interpolate import make_interp_spline
 import matplotlib.pyplot as plt
 import pylab
 
-# Ouvrir la fenètre en affichage adaptatif pour chaque pc:
-# os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (GetSystemMetrics(0)/10,GetSystemMetrics(1)/10)
 # CONSTANTE:
 # Couleur:
 CBlack = (13,13,13)
@@ -332,13 +330,7 @@ def options(i,fps,t,N):
         440,
         10,
         allignement="C")
-
-    # if plot:
-    #     pygame.draw.rect(FWindow, (237,152,16),BUTTON_AREA)
-    #     print("Plot button")
-    # else:
-    #     pygame.draw.rect(FWindow, (0,0,0),BUTTON_AREA)
-    #     print("off button")
+    
 # Fonctionnement du programme uniquement si l'on utilise ce fichier:
 if __name__ == "__main__":
     main()
