@@ -80,4 +80,84 @@ def voisinsde(coord): # coord = (colonne, ligne) = (y,x)
 ```
 
 ## Energy fluctuation
-To represent the energy fluctuation
+To represent the energy fluctuation we used the following equation:
+<p align="center"> 
+<img src="https://latex.codecogs.com/png.image?\dpi{110}{\color{White}&space;\mathbf{dE&space;=&space;2s_i\sum&space;ks_j,&space;()i,j)\in&space;[1,n]^2,&space;k&space;=&space;1}}">
+</p>
+
+**si** corresponds to a chosen **dS**, **sj** one of the 8 neighboor of the chosen element and **k** is a coefficient here equal to 1.
+```python
+def variation_energie(coord):
+def variation_energie(coord): # coord = (line, column) = (y,x)
+    y = coord[0]
+    x = coord[1]
+    cumul = 0
+    
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if (j, i) == (0, 0):
+                continue
+            y_voisin = (y + j + N) % N
+            x_voisin = (x + i + N) % N
+            cumul += GRILLE[y_voisin][x_voisin]
+    
+    return 2 * GRILLE[coord[0]][coord[1]] * cumul
+```
+According to fluctuation energy value. We check whether or not we change the spin.
+
+## Major loop
+Now that we have all of these functions, we can do our first simulation of how Ferromagnetism should look like:
+```python
+iterations = 10000
+aimentation = np.array([])
+for j in range(iterations):
+    # we choose a random spin:
+    cellule = (random.randint(0, N - 1), random.randint(0, N - 1))
+    if changer_spin(variation_energie(cellule), BETA):
+        GRILLE[cellule[0], cellule[1]] *= -1
+    np.append(aimentation, np.sum(GRILLE))
+```
+
+# Graphic interface
+The Graphic interface is made with PyGame and we live plot our data with matplotlib. We fixed window size to a given value which is defined by the variable ```SWidth``` and ```SHeight```.
+## Showing dS grid
+We wants our grid to have a significant area to display correctly each **dS** element. We decided that the size of the **grid** would be the same as the height of pygame window. This means that dimension of the grid **n** needs to divide **SHeight** in order to have a correct block size *(int)* :
+
+```python
+BlockSize = SHeight/N
+
+def Grid(n):
+    global BlockSize
+    for i in range(n):
+        for j in range(n):
+            x,y = BlockSize*i + SWidth-SHeight, BlockSize*j
+            # rect = pygame.Rect(x,y,BlockSize,BlockSize)
+            val = GRILLE[j][i]
+            if val == -1:
+                pygame.draw.rect(
+                    FWindow,
+                    CRouge,
+                    pygame.Rect(x,y,BlockSize,BlockSize))
+            else:
+                pygame.draw.rect(
+                    FWindow,
+                    CLightBlue,
+                    pygame.Rect(x,y,BlockSize,BlockSize))
+```
+This function is made for a global update of the grid however we discovered that only a few **dS** element changes on the grid and it is only them that we want to update:
+```python
+def remplir_cell(cellule):
+    x,y = BlockSize*cellule[1] + SWidth-SHeight, BlockSize*cellule[0]
+    # rect = pygame.Rect(x,y,BlockSize,BlockSize)
+    val = GRILLE[cellule[0]][cellule[1]]
+    if val == -1:
+        pygame.draw.rect(
+            FWindow,
+            CRouge,
+            pygame.Rect(x,y,BlockSize,BlockSize))
+    else:
+        pygame.draw.rect(
+            FWindow,
+            CLightBlue,
+            pygame.Rect(x,y,BlockSize,BlockSize))
+```
